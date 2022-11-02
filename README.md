@@ -15,3 +15,6 @@ The goal is to roll out a bare bones version of this project for the Fall of 202
 - Twilio API Setup for Chat: Get CSV from the Google Form, send a opt in and opt out message for users, update the list of participants attending
 - Initial Sign Up Form Excel: https://docs.google.com/spreadsheets/d/15JCMdNagbJrnLFoqCAn9JBI9ka8dsbOj4i_5o02NuJ8/edit?usp=sharing
 - Initial Sign Up Form Google Form: https://docs.google.com/spreadsheets/d/15JCMdNagbJrnLFoqCAn9JBI9ka8dsbOj4i_5o02NuJ8/edit?usp=sharing
+
+## Sprint #3:
+- database schema and architecture: https://docs.google.com/document/d/1hs-NumD0QCqlHZdw_pLJ_k-TDHMnFA2HPqziSQUC5Dg/edit?usp=sharing
