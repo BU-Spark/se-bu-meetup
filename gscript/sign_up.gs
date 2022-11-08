@@ -48,6 +48,7 @@ class Member {
     this.email = "";
     this.school = "";
     this.department = "";
+    this.phone_number = "";
   }
 }
 
@@ -74,6 +75,9 @@ function createMember(itemResponses) {
         break;
       case "What is your BU email address?":
         member.email = response;
+        break;
+      case "What is your phone number?":
+        member.phone_number = response;
         break;
       case "Are you in a Doctoral program (PhD, J.D. etc)":
         if (response == "No") {
