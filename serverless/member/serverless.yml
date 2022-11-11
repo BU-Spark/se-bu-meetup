@@ -1,0 +1,34 @@
+service: register
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  apiGateway:
+    restApiId:
+      "Fn::ImportValue": Gateway-restApiId
+    restApiRootResourceId:
+      "Fn::ImportValue": Gateway-rootResourceId
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: "*"
+
+functions:
+  register:
+    handler: handler.main
+    events:
+      - http:
+          path: register
+          method: post
+
+plugins:
+  - serverless-python-requirements
