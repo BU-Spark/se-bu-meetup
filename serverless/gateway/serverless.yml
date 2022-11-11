@@ -1,0 +1,26 @@
+service: api-gateway
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-east-1
+
+resources:
+  Resources:
+    Gateway:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        Name: Gateway
+  Outputs:
+    apiGatewayRestApiId:
+      Value:
+        Ref: Gateway
+      Export:
+        Name: Gateway-restApiId
+    apiGatewayRestApiRootResourceId:
+      Value:
+        Fn::GetAtt:
+          - Gateway
+          - RootResourceId
+      Export:
+        Name: Gateway-rootResourceId
