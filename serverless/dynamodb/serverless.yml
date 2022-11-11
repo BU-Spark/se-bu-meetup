@@ -1,0 +1,22 @@
+service: dynamo-table
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-east-1
+
+resources:
+  Resources:
+    myTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Members
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
