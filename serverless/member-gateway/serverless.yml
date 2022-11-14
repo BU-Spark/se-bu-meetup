@@ -1,28 +1,25 @@
-service: api-gateway
+service: member-gateway
 
 provider:
   name: aws
-  runtime: python3.8
   region: us-east-1
 
 resources:
   Resources:
-    Gateway:
+    MemberGateWay:
       Type: AWS::ApiGateway::RestApi
       Properties:
         Name: meetup-member
   Outputs:
     apiGatewayRestApiId:
       Value:
-        Ref: Gateway
+        Ref: MemberGateWay
       Export:
-        Name: Gateway-restApiId
+        Name: MemberGateWay-restApiId
     apiGatewayRestApiRootResourceId:
       Value:
         Fn::GetAtt:
-          - Gateway
+          - MemberGateWay
           - RootResourceId
       Export:
-        Name: Gateway-rootResourceId
-
-o 
+        Name: MemberGateway-rootResourceId

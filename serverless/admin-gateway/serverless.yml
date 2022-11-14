@@ -1,26 +1,25 @@
-service: api-gateway-admin
+service: admin-gateway
 
 provider:
   name: aws
-  runtime: python3.8
   region: us-east-1
 
 resources:
   Resources:
-    Gateway:
+    AdminGateWay:
       Type: AWS::ApiGateway::RestApi
       Properties:
         Name: meetup-admin
   Outputs:
     apiGatewayRestApiId:
       Value:
-        Ref: Gateway
+        Ref: AdminGateWay
       Export:
-        Name: Gateway-restApiId
-    apiGnaatewayRestApiRootResourceId:
+        Name: AdminGateWay-restApiId
+    apiGatewayRestApiRootResourceId:
       Value:
         Fn::GetAtt:
-          - Gateway
+          - AdminGateWay
           - RootResourceId
       Export:
-        Name: Gateway-rootResourceId
+        Name: AdminGateway-rootResourceId
