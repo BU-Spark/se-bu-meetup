@@ -2,12 +2,11 @@ service: dynamo-table
 
 provider:
   name: aws
-  runtime: python3.8
   region: us-east-1
 
 resources:
   Resources:
-    myTable:
+    memberTable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: Member
@@ -16,6 +15,19 @@ resources:
             AttributeType: S
         KeySchema:
           - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    roundsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Rounds
+        AttributeDefinitions:
+          - AttributeName: round_number
+            AttributeType: N
+        KeySchema:
+          - AttributeName: round_number
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
