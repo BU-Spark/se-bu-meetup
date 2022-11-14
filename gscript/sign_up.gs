@@ -1,5 +1,5 @@
 const api_url =
-  "https://o8lij90j23.execute-api.us-east-1.amazonaws.com/dev/register";
+  "https://1zrqp9tgzh.execute-api.us-east-1.amazonaws.com/dev/register";
 
 function onSubmit(event) {
   try {
