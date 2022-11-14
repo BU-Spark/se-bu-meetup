@@ -1,0 +1,33 @@
+service: lambda-admin
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  apiGateway:
+      "Fn::ImportValue": Gateway-restApiId
+    restApiRootResourceId:
+      "Fn::ImportValue": Gateway-rootResourceId
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: "*"
+
+functions:
+  newRound:
+    handler: newRound.lambda_handler
+    events:
+      - http:
+          path: new-round
+          method: post
+
+plugins:
+  - serverless-python-requirements
