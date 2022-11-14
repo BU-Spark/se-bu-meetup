@@ -10,7 +10,7 @@ resources:
     Gateway:
       Type: AWS::ApiGateway::RestApi
       Properties:
-        Name: Gateway
+        Name: meetup-member
   Outputs:
     apiGatewayRestApiId:
       Value:
