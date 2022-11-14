@@ -1,10 +1,11 @@
-service: lambda-admin
+service: admin-lambda
 
 provider:
   name: aws
   runtime: python3.9
   region: us-east-1
   apiGateway:
+    restApiId:
       "Fn::ImportValue": Gateway-restApiId
     restApiRootResourceId:
       "Fn::ImportValue": Gateway-rootResourceId
