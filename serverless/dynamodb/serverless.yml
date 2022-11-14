@@ -10,7 +10,7 @@ resources:
     myTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: Members
+        TableName: Member
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
