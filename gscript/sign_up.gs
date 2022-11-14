@@ -74,7 +74,7 @@ function createMember(itemResponses) {
         if (response == "Faculty of Computing & Data Sciences") {
           member.department = "Faculty of Computing & Data Sciences";
         } else if (response == "School of Law") {
-          member.department = "School of Law";
+          member.department = "Law";
         } else if (response == "Questrom School of Business") {
           member.department = "Business";
         } else if (response == "School of Social Work") {
