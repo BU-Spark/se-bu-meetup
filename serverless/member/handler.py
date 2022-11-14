@@ -5,7 +5,7 @@ def main(event, context):
     try:
         print(f"Triggered event: {event}")
         resource = boto3.resource('dynamodb')
-        membersTable = resource.Table('Members')
+        membersTable = resource.Table('Member')
         body = json.loads(event["body"])
         print(f"Inserting into table: {body}")
         membersTable.put_item(Item={

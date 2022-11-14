@@ -23,7 +23,7 @@ provider:
           Resource: "*"
 
 functions:
-  register:
+  main:
     handler: handler.main
     events:
       - http:
