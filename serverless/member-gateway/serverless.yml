@@ -1,0 +1,25 @@
+service: member-gateway
+
+provider:
+  name: aws
+  region: us-east-1
+
+resources:
+  Resources:
+    MemberGateWay:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        Name: meetup-member
+  Outputs:
+    apiGatewayRestApiId:
+      Value:
+        Ref: MemberGateWay
+      Export:
+        Name: MemberGateWay-restApiId
+    apiGatewayRestApiRootResourceId:
+      Value:
+        Fn::GetAtt:
+          - MemberGateWay
+          - RootResourceId
+      Export:
+        Name: MemberGateway-rootResourceId

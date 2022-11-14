@@ -6,9 +6,9 @@ provider:
   region: us-east-1
   apiGateway:
     restApiId:
-      "Fn::ImportValue": Gateway-restApiId
+      "Fn::ImportValue": MemberGateWay-restApiId
     restApiRootResourceId:
-      "Fn::ImportValue": Gateway-rootResourceId
+      "Fn::ImportValue": MemberGateway-rootResourceId
   iam:
     role:
       statements:
