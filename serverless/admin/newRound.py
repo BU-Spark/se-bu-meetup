@@ -44,7 +44,7 @@ def lambda_handler(event, context):
         def get_round_numb(round):
             return int(round.get('round_number'))
         items.sort(key=get_round_numb, reverse=True)
-        lastKey = items[0]['round_number']
+        lastKey = int(items[0]['round_number'])
     # if empty then we know it’s round 1 else lastkey + 1 
     next = str(lastKey + 1)
     print(next)
