@@ -25,7 +25,7 @@ resources:
         TableName: Rounds
         AttributeDefinitions:
           - AttributeName: round_number
-            AttributeType: N
+            AttributeType: S
         KeySchema:
           - AttributeName: round_number
             KeyType: HASH
