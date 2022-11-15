@@ -11,14 +11,14 @@ def main(event, context):
         resource = boto3.resource('dynamodb')
         membersTable = resource.Table('Member')
         body = json.loads(event["body"])
-        logger.info(f"Inserting into table: {body}")
-        membersTable.put_item(Item={
+        item = {
             **body, 
             "id": body["timestamp"] + "|" + body["email"],
             "prior_matches": [],
             "round": {}
-            }
-        )
+        }
+        logger.info(f"Inserting into table: {item}")
+        membersTable.put_item(Item=item)
         response = {"statusCode": 200, "body": json.dumps({
             "statusCode": 200,
             "message": "Success!"
