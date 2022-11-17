@@ -1,5 +1,8 @@
 service: admin-lambda
 
+package:
+  include: template/**
+
 provider:
   name: aws
   runtime: python3.9
@@ -29,6 +32,12 @@ functions:
       - http:
           path: new-round
           method: post
+  homePage:
+    handler: index.lambda_handler
+    events:
+      - http:
+          path: home
+          method: get
 
 plugins:
   - serverless-python-requirements
