@@ -29,6 +29,12 @@ functions:
       - http:
           path: register
           method: post
+  optin:
+    handler: optin.main
+    events:
+      - http:
+          path: optin
+          method: post
 
 plugins:
   - serverless-python-requirements
