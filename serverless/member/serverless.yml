@@ -35,6 +35,13 @@ functions:
       - http:
           path: optin
           method: post
+  sendEmail:
+    handler: sendEmail.main
+    events:
+      - http:
+          path: email
+          method: post
+    environment: ${file(env.json)}
 
 plugins:
   - serverless-python-requirements
