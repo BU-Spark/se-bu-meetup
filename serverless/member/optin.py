@@ -24,6 +24,9 @@ def main(event, context):
         user_id = body["id"]
         optedIn = body["opted_in"]
 
+        if type(optedIn) != bool:
+          raise Exception("opted_in must be a boolean")
+
         # find member with the id and then update their opted_in status
         membersTable.update_item(
             Key={'id': user_id},
