@@ -4,6 +4,7 @@ import boto3
 client = boto3.resource('dynamodb')
 memberTable = client.Table('Member')
 roundsTable = client.Table('Rounds')
+clientLambda = boto3.resource('lambda')
 
 def write_to_rounds(next):
     # { round_number: number; groups: {}} 
@@ -63,11 +64,29 @@ def lambda_handler(event, context):
             })
         }
         
+    # invoke notify lambda
+    response = client.invoke(
+        FunctionName='arn:aws:lambda:us-east-1:947610578306:function:member-lambda-dev-sendEmail',
+        InvocationType='RequestResponse',
+        LogType='Tail',
+    )
+    
+    print('notify status: ' + str(response['StatusCode']))
+    if (response['StatusCode'] != 200):
+        return {
+            "statusCode": 500, 
+            "body": json.dumps({
+                "statusCode": 500,
+                "message": f" notify fail: {Exception}"
+            })
+        } 
+    
     # succeed return 
     return {
         "statusCode": 200, 
         "body": json.dumps({
             "statusCode": 200,
-            "message": "Success!"
+            "message": "Success!",
+            "round": next
         })
     }
