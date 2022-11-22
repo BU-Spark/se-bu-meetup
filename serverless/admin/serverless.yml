@@ -34,12 +34,25 @@ functions:
       - http:
           path: new-round
           method: post
+          authorizer:
+            name: authorizerFunc
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: request
   homePage:
     handler: index.lambda_handler
     events:
       - http:
           path: home
           method: get
+          authorizer:
+            name: authorizerFunc
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: request 
+  authorizerFunc:
+    handler: auth.lambda_handler
+
 
 plugins:
   - serverless-python-requirements
