@@ -1,27 +1,40 @@
 import json
 import base64
-def process_password(headers):
+import time
+
+def process_cookie(cookie):
     try:
-        password_encoded = headers['Authorization']
-        print(password_encoded)
-        if password_encoded.startswith("Basic"):
-            password_encoded = password_encoded[6:]
-        password_decoded = base64.b64decode(password_encoded).decode()
-        print(password_decoded)
-        username, password = password_decoded.split(":")
+        if cookie.startswith("Session="):
+            cookie = cookie[8:]
+        list = cookie.split(",")
+        username = list[0]
+        password = list[1]
+        timestamp = list[2]
+        print("username: " + username)
+        print("password: " + password)
+        print("timestamp: " + timestamp)
+        if (isExpire(timestamp)):
+            return False
+        # not expire
         if (username == "bumeetup" and password == "bumeetupadminpassword"):
             return True
+        return False
     except:
         return False
-    return False
+
+def isExpire(start):
+    end = time.time()
+    duration = end - float(start)
+    return duration > 86400
 
 def create_policy():
     authResponse = { 
+        "principalId": "admin",
         "policyDocument": { 
             "Version": "2012-10-17", 
             "Statement": [{
                 "Action": "execute-api:Invoke", 
-                "Resource": ["arn:aws:execute-api:us-east-1:947610578306:cmhnb3jd1m/*/*/*"], 
+                "Resource": ["arn:aws:execute-api:us-east-1:947610578306:cmhnb3jd1m/*/*"], 
                 "Effect": "Allow"
             }]
         }
@@ -30,11 +43,16 @@ def create_policy():
 
 def lambda_handler(event, context):
     print(event)
-    if process_password(event['headers']):
+    headers = event['headers']
+    if process_cookie(headers['Cookie']):
         print("PASSED AUTH")
         return create_policy()
     else:
         print("FAILED AUTH")
-        result = {}
-        result['status'] = 401
-        return result
+        # clear cookie
+        response = {}
+        response['statusCode'] = 401
+        response['headers'] = {
+            'Set-Cookie': ""
+        }
+        return response 

@@ -20,6 +20,7 @@
     <div class="d-flex flex-column">
         <button id="newround" class="btn btn-primary mt-2">New Round</button>
         <button id="match" class="btn btn-primary mt-2 mb-2">Match Round</button>
+        <button id="login" class="btn btn-primary mt-2 mb-2">login</button>
     </div>
     <div class="alert alert-secondary">
         <div>Tips:</div>
@@ -50,6 +51,21 @@
             .done(function (data) {
                 console.log(`code: ${data.statusCode} msg: ${data.message}`);
                 location.reload();
+            });
+        });
+
+        $("#login").click(function (event) {
+            event.preventDefault();
+            $.ajax({
+                method: "POST",
+                url: "/dev/login",
+                data: JSON.stringify({
+                    username: "bumeetup",
+                    password: "bumeetupadminpassword"
+                })
+            })
+            .done(function (data) {
+                console.log(`code: ${data.statusCode} msg: ${data.message}`);
             });
         });
     </script>
