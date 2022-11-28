@@ -69,15 +69,5 @@ functions:
   authorizerFunc:
     handler: auth.lambda_handler
 
-resources:
-  Resources:
-    GatewayResponse:
-      Type: 'AWS::ApiGateway::GatewayResponse'
-      Properties:
-        ResponseType: UNAUTHORIZED
-        RestApiId:
-          "Fn::ImportValue": AdminGateWay-restApiId
-        StatusCode: '401'
-
 plugins:
   - serverless-python-requirements

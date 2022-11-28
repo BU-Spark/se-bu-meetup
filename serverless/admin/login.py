@@ -26,8 +26,16 @@ def lambda_handler(event, context):
     else:
         print("FAILED AUTH")
         # clear cookie
-        response['statusCode'] = 401
-        response['headers'] = {
-            'Set-Cookie': ""
+        response = {
+            "isBase64Encoded": False,
+            "statusCode": 401,
+            "headers": {
+                "Content-Type": "application/json",
+                'Set-Cookie': ""
+            },
+            "body": json.dumps({
+                "statusCode": 401,
+                "message": "auth fail",
+            })
         }
-        return response
+        return response 

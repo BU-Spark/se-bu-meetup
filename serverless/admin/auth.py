@@ -44,15 +44,33 @@ def create_policy():
 def lambda_handler(event, context):
     print(event)
     headers = event['headers']
-    if process_cookie(headers['Cookie']):
+    if ('Cookie' in headers.keys()) and process_cookie(headers['Cookie']):
         print("PASSED AUTH")
         return create_policy()
     else:
         print("FAILED AUTH")
         # clear cookie
-        response = {}
-        response['statusCode'] = 401
-        response['headers'] = {
-            'Set-Cookie': ""
+        # response = {
+        #     "isBase64Encoded": False,
+        #     "statusCode": 401,
+        #     "headers": {
+        #         "Content-Type": "application/json",
+        #         'Set-Cookie': ""
+        #     },
+        #     "body": json.dumps({
+        #         "statusCode": 401,
+        #         "message": "auth fail",
+        #     })
+        # }
+        resp = { 
+            "policyDocument": { 
+                "Version": "2012-10-17", 
+                "Statement": [{
+                    "Action": "execute-api:Invoke", 
+                    "Resource": ["arn:aws:execute-api:us-east-1:947610578306:cmhnb3jd1m/*/*"], 
+                    "Effect": "Deny"
+                }]
+            }
         }
-        return response 
+        # return response 
+        return resp
