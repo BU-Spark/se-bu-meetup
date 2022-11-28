@@ -56,13 +56,17 @@ def lambda_handler(event, context):
         # 3. read all member and add round
         write_to_member(next)
     except Exception:
-        return {
+        return json.dumps({
             "statusCode": 500, 
+            "headers": {
+                "Content-Type": "application/json"
+            },
             "body": json.dumps({
                 "statusCode": 500,
                 "message": f" wrong on server: {Exception}"
             })
-        }
+        })
+        
         
     # invoke notify lambda
     # response = client.invoke(
@@ -83,11 +87,18 @@ def lambda_handler(event, context):
     
     # succeed return 
     response = {
-        "isBase64Encoded": False,
-        "statusCode": 200,
-        "headers": {
-            "Content-Type": "application/json"
-        },
-        "body": json.dumps({"round": next})
-    }
+            "isBase64Encoded": False,
+            "statusCode": 200,
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps({
+                "statusCode": 200,
+                "message": "success",
+                "data": {
+                    "round": next,
+                    "status": False 
+                }
+            })
+        }
     return response

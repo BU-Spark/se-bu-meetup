@@ -28,6 +28,18 @@ provider:
           Resource: "*"
 
 functions:
+  status:
+    handler: status.lambda_handler
+    events:
+      - http:
+          path: status
+          method: get
+          cors: true
+          authorizer:
+            name: authorizerFunc
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: request 
   newRound:
     handler: newRound.lambda_handler
     events:
