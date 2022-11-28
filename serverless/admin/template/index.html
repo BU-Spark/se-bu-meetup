@@ -36,7 +36,7 @@
     <script src="https://cdn.bootcss.com/vue/2.5.17/vue.js"></script>
     <div id="main-app" class="container-sm" style="margin-top: 60px">
         <div>
-            Current Round: {{ current }} Matched: {{ status }}
+            Current Round: {{ round }} Matched: {{ status }}
         </div>
         <div class="d-flex flex-column">
             <button @click="onNewRoundClick" class="btn btn-primary mt-2">New Round</button>
@@ -66,9 +66,9 @@
         const main = new Vue({
             el: '#main-app',
             data: {
-                current: 0,
+                round: 0,
                 status: false,
-                isLoading: false,
+                isLoading: true,
                 isLogined: false,
                 error: "",
                 username: "",
@@ -80,7 +80,7 @@
                         method: "GET",
                         url: "/dev/status",
                     })
-                    .then(function (resp) {
+                    .then((resp) => {
                         console.log(resp);
                         const data = resp.data;
                         console.log(`GET /status: code: ${resp.statusCode} msg: ${resp.message}`);
@@ -108,9 +108,10 @@
 
                 const data = await getData();
                 console.log(data);
-                this.current = data.round || 0;
+                this.round = data.round || 0;
                 this.status = data.status || false;
                 this.isLogined = data.isLogined || false;
+                this.isLoading = false;
             },
             methods: {
                 onLoginClick() {
@@ -123,7 +124,7 @@
                             password: this.password
                         })
                     })
-                    .then(function (resp) {
+                    .then((resp) => {
                         console.log(resp);
                         const data = resp.data;
                         console.log(`POST /login: code: ${resp.statusCode} msg: ${resp.message}`);
@@ -141,7 +142,7 @@
                         method: "POST",
                         url: "/dev/new-round",
                     })
-                    .then(function (resp) {
+                    .then((resp) => {
                         console.log(resp);
                         const data = resp.data;
                         console.log(`POST /new-round: code: ${resp.statusCode} msg: ${resp.message}`);
@@ -167,7 +168,7 @@
                         method: "POST",
                         url: "/dev/match",
                     })
-                    .done(function (resp) {
+                    .done((resp) => {
                         console.log(resp);
                         const data = resp.data;
                         console.log(`POST /match: code: ${resp.statusCode} msg: ${resp.message}`);
