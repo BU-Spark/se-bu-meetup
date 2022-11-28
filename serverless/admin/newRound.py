@@ -87,18 +87,18 @@ def lambda_handler(event, context):
     
     # succeed return 
     response = {
-            "isBase64Encoded": False,
+        "isBase64Encoded": False,
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": json.dumps({
             "statusCode": 200,
-            "headers": {
-                "Content-Type": "application/json"
-            },
-            "body": json.dumps({
-                "statusCode": 200,
-                "message": "success",
-                "data": {
-                    "round": next,
-                    "status": False 
-                }
-            })
-        }
+            "message": "success",
+            "data": {
+                "round": next,
+                "status": False 
+            }
+        })
+    }
     return response
