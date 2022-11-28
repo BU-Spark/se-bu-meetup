@@ -80,17 +80,17 @@
                         method: "GET",
                         url: "/dev/status",
                     })
-                    .done(function (resp) {
+                    .then(function (resp) {
                         console.log(resp);
                         const data = resp.data;
                         console.log(`GET /status: code: ${resp.statusCode} msg: ${resp.message}`);
-                        if (data.statusCode == 200) {
+                        if (resp.statusCode == 200) {
                             return {
                                 round: data.round,
                                 status: data.status,
                                 isLogined: true 
                             }
-                        } else if (data.statusCode == 401) {
+                        } else if (resp.statusCode == 401) {
                             return {
                                 round: -1,
                                 status: false,
@@ -103,13 +103,14 @@
                                 isLogined: true 
                             } 
                         }
-                    }); 
-                };
+                    })
+                }
 
                 const data = await getData();
-                this.current = data.round;
-                this.status = data.status;
-                this.isLogined = data.isLogined;
+                console.log(data);
+                this.current = data.round || 0;
+                this.status = data.status || false;
+                this.isLogined = data.isLogined || false;
             },
             methods: {
                 onLoginClick() {
@@ -118,15 +119,15 @@
                         method: "POST",
                         url: "/dev/login",
                         data: JSON.stringify({
-                            username: "bumeetup",
-                            password: "bumeetupadminpassword"
+                            username: this.username,
+                            password: this.password
                         })
                     })
-                    .done(function (resp) {
+                    .then(function (resp) {
                         console.log(resp);
                         const data = resp.data;
                         console.log(`POST /login: code: ${resp.statusCode} msg: ${resp.message}`);
-                        if (data.statusCode == 200) {
+                        if (resp.statusCode == 200) {
                             this.isLogined = true;
                         }
                         this.username = "";
@@ -140,15 +141,15 @@
                         method: "POST",
                         url: "/dev/new-round",
                     })
-                    .done(function (resp) {
+                    .then(function (resp) {
                         console.log(resp);
                         const data = resp.data;
                         console.log(`POST /new-round: code: ${resp.statusCode} msg: ${resp.message}`);
-                        if (data.statusCode == 200) {
+                        if (resp.statusCode == 200) {
                             this.round = data.round;
                             this.status = data.status;
                             this.isLogined = true;
-                        } else if (data.statusCode == 401) {
+                        } else if (resp.statusCode == 401) {
                             this.round = -1;
                             this.status = false;
                             this.isLogined = false; 
@@ -157,11 +158,11 @@
                             this.status = false;
                             this.isLogined = true;
                         } 
-                        this.isLogined = false;
+                        this.isLoading = false;
                     });
                 },
                 onMatchClick() {
-                    this.isLogined = true;
+                    this.isLoading = true;
                     $.ajax({
                         method: "POST",
                         url: "/dev/match",
@@ -170,11 +171,11 @@
                         console.log(resp);
                         const data = resp.data;
                         console.log(`POST /match: code: ${resp.statusCode} msg: ${resp.message}`);
-                        if (data.statusCode == 200) {
+                        if (resp.statusCode == 200) {
                             this.round = data.round;
                             this.status = data.status;
                             this.isLogined = true;
-                        } else if (data.statusCode == 401) {
+                        } else if (resp.statusCode == 401) {
                             this.round = -1;
                             this.status = false;
                             this.isLogined = false; 
@@ -183,7 +184,7 @@
                             this.status = false;
                             this.isLogined = true;
                         } 
-                        this.isLogined = true;
+                        this.isLoading = true;
                     });
                 }
             }
