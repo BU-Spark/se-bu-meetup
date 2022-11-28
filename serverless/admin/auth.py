@@ -27,26 +27,23 @@ def isExpire(start):
     duration = end - float(start)
     return duration > 86400
 
-def create_policy():
-    authResponse = { 
-        "principalId": "admin",
-        "policyDocument": { 
-            "Version": "2012-10-17", 
-            "Statement": [{
-                "Action": "execute-api:Invoke", 
-                "Resource": ["arn:aws:execute-api:us-east-1:947610578306:cmhnb3jd1m/*/*"], 
-                "Effect": "Allow"
-            }]
-        }
-    }
-    return authResponse
-
 def lambda_handler(event, context):
     print(event)
     headers = event['headers']
     if ('Cookie' in headers.keys()) and process_cookie(headers['Cookie']):
         print("PASSED AUTH")
-        return create_policy()
+        authResponse = { 
+            "principalId": "admin",
+            "policyDocument": { 
+                "Version": "2012-10-17", 
+                "Statement": [{
+                    "Action": "execute-api:Invoke", 
+                    "Resource": ["arn:aws:execute-api:us-east-1:947610578306:cmhnb3jd1m/*/*"], 
+                    "Effect": "Allow"
+                }]
+            }
+        }
+        return authResponse
     else:
         print("FAILED AUTH")
         # clear cookie

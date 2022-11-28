@@ -137,7 +137,7 @@
                             window.location.reload();
                         },
                         error: (XMLHttpRequest, textStatus, errorThrown) => {
-                            console.log(`POST /login: ${XMLHttpRequest.status}`);
+                            console.log(`POST /login: ${XMLHttpRequest.status} error`);
                             this.username = "";
                             this.password = "";
                             this.isLoading = false;

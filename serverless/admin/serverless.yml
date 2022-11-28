@@ -38,7 +38,7 @@ functions:
           authorizer:
             name: authorizerFunc
             resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+            identitySource: method.request.header.cookie
             type: request 
   newRound:
     handler: newRound.lambda_handler
@@ -50,7 +50,7 @@ functions:
           authorizer:
             name: authorizerFunc
             resultTtlInSeconds: 0
-            identitySource: method.request.header.Authorization
+            identitySource: method.request.header.cookie
             type: request
   login:
     handler: login.lambda_handler
@@ -68,6 +68,16 @@ functions:
           cors: true
   authorizerFunc:
     handler: auth.lambda_handler
+
+resources:
+  Resources:
+    GatewayResponse:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          "Fn::ImportValue": AdminGateWay-restApiId
+        StatusCode: '401'
 
 plugins:
   - serverless-python-requirements

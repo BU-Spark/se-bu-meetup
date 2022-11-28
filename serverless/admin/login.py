@@ -11,16 +11,20 @@ def lambda_handler(event, context):
     print(event)
     body = json.loads(event['body'])
     
-    response = {
-        "isBase64Encoded": False,
-        "statusCode": 200,
-    }
-    
     if process_body(body):
         print("PASSED AUTH")
         # set cookie
-        response['headers'] = {
-            'Set-Cookie': "Session=bumeetup,bumeetupadminpassword," + str(time.time())
+        response = {
+            "isBase64Encoded": False,
+            "statusCode": 200,
+            "headers": {
+                "Content-Type": "application/json",
+                'Set-Cookie': "Session=bumeetup,bumeetupadminpassword," + str(time.time())
+            },
+            "body": json.dumps({
+                "statusCode": 200,
+                "message": "success",
+            })
         }
         return response
     else:
