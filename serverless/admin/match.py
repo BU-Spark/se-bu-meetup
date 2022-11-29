@@ -102,7 +102,17 @@ def lambda_handler(event, context):
 
         response = {
             "statusCode": 200,
-            "body": json.dumps({"statusCode": 200, "message": "Success!"}),
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps({
+                "statusCode": 200, 
+                "message": "Success!",
+                "data": {
+                    "round": lastKey,
+                    "status": True 
+                }
+            }),
         }
     except Exception as e:
         logger.error(f"Exception: {e}")
