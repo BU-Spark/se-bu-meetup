@@ -120,10 +120,10 @@ def lambda_handler(event, context):
     except Exception as e:
         logger.error(f"Exception: {e}")
         response = {
-            "statusCode": 400,
+            "statusCode": 500,
             "body": json.dumps(
                 {
-                    "statusCode": 400,
+                    "statusCode": 500,
                     "message": f"Something went wrong! Check it out: {e}",
                 }
             ),
