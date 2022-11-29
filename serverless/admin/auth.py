@@ -1,22 +1,28 @@
 import json
 import base64
 import time
+import hashlib
+
 
 def process_cookie(cookie):
     try:
         if cookie.startswith("Session="):
             cookie = cookie[8:]
         list = cookie.split(",")
-        username = list[0]
-        password = list[1]
-        timestamp = list[2]
-        print("username: " + username)
-        print("password: " + password)
+        hashed = list[0]
+        timestamp = list[1]
+        print("hashed: " + hashed)
         print("timestamp: " + timestamp)
         if (isExpire(timestamp)):
             return False
         # not expire
-        if (username == "bumeetup" and password == "bumeetupadminpassword"):
+        key = "bumeetup,bumeetupadminpassword"
+        encoded = key.encode(encoding='UTF-8', errors='strict')
+        md5 = hashlib.md5()
+        md5.update(encoded)
+        standard = md5.hexdigest()
+        print("standard: " + standard) 
+        if (standard == hashed):
             return True
         return False
     except:
@@ -46,19 +52,6 @@ def lambda_handler(event, context):
         return authResponse
     else:
         print("FAILED AUTH")
-        # clear cookie
-        # response = {
-        #     "isBase64Encoded": False,
-        #     "statusCode": 401,
-        #     "headers": {
-        #         "Content-Type": "application/json",
-        #         'Set-Cookie': ""
-        #     },
-        #     "body": json.dumps({
-        #         "statusCode": 401,
-        #         "message": "auth fail",
-        #     })
-        # }
         resp = { 
             "policyDocument": { 
                 "Version": "2012-10-17", 

@@ -185,12 +185,8 @@
                         error: (XMLHttpRequest, textStatus, errorThrown) => {
                             console.log(`POST /new-round: ${XMLHttpRequest.status}`);
                             if (XMLHttpRequest.status == 403) {
-                                this.round = -1;
-                                this.status = false;
                                 this.isLogined = false; 
                             } else {
-                                this.round = -1;
-                                this.status = false;
                                 this.isLogined = true;
                             } 
                             this.isLoading = false;
@@ -214,12 +210,8 @@
                         error: (XMLHttpRequest, textStatus, errorThrown) => {
                             console.log(`POST /match: ${XMLHttpRequest.status}`);
                             if (XMLHttpRequest.status == 403) {
-                                this.round = -1;
-                                this.status = false;
                                 this.isLogined = false; 
                             } else {
-                                this.round = -1;
-                                this.status = false;
                                 this.isLogined = true;
                             } 
                             this.isLoading = false;
