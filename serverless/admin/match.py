@@ -45,6 +45,7 @@ def lambda_handler(event, context):
             })
         
         df = pd.DataFrame.from_records([d for d in tmp])
+        df.set_index('id', inplace=True)
         
         data = []
         # round 1 pairing
@@ -78,8 +79,9 @@ def lambda_handler(event, context):
                 })
 
         df1 = pd.DataFrame.from_records([d for d in data])
+        df1.set_index('id', inplace=True)
 
-        createMatch(df1, roundsItems)
+        createMatch(df1, number4groups, membersTable, roundsTable, str(lastKey))
 
         response = {
             "statusCode": 200,
@@ -97,50 +99,141 @@ def lambda_handler(event, context):
             ),
         }
     return response
-  
 
 def get_possible_matches(df, member):
     # determines all the possible matches for each person in the program
-    non_previous_matches = df.id.to_numpy()[~np.in1d(df.id.to_numpy(), member['prior_matches'])] 
-    non_same_department = df.id.to_numpy()[~(member['department'] == df['department'])]
+    non_previous_matches = df.index.to_numpy()[~np.in1d(df.index.to_numpy(), member['prior_matches'])] 
+    non_same_department = df.index.to_numpy()[~(member['department'] == df['department'])]
     intersect = np.intersect1d(non_previous_matches, non_same_department)
     len_intersect = -1 if len(intersect) == 0 else len(intersect)
     return intersect.tolist(), len_intersect
 
-def createMatch(df, rounds):
+def createMatch(df, number4groups, membersTable, roundsTable, lastKey):
     # calls the matching loop up to 1000 times to create the match
     counter = 0
     out = 0
 
-    # try: 
-    #     while out == 0:
-    #         counter += 1
-    #         out = perform_random_loop(membersItems, roundsItems, lastKey)
-    #         # use data to populate hr_data, full_data, and hr_full_data
-    #         # hr_data['group' + str(round_widget.value)] = data['current_group']
-    #         # hr_full_data = pd.merge(hr_full_data, hr_data, how='left')
-    #         # full_data.loc[data.index, :] = data[:].copy()
-    #         if counter >= 1000:
-    #             raise Exception("match failed, not possible")
-    # except Exception as e:
-    #     raise Exception(e)
+    try: 
+        while out == 0:
+            counter += 1
+            out = perform_random_loop(df, number4groups)
+            if counter >= 1000:
+                raise Exception("match failed, not possible")
+       
+        pd.options.display.max_columns = None
+        pd.options.display.max_rows = None
+        df.reset_index(inplace=True)
+        members = df.to_dict(orient='records')
+        for member in members:
+            user_id = member['id']
+            cur_group = member['current_group'] 
+            cur_matches = member['current_match']
+            membersTable.update_item(
+                Key={'id': user_id},
+                UpdateExpression='SET round.#key.#grp = :grpNum',
+                ExpressionAttributeNames={'#key': lastKey, "#grp": "group"},
+                ExpressionAttributeValues={':grpNum': cur_group},
+                ConditionExpression='attribute_exists(id)'
+            )
+            roundsTable.update_item(                
+                Key={'round_number': lastKey},
+                UpdateExpression='SET groups.#grp = :matched',
+                ExpressionAttributeNames={"#grp": str(cur_group)},
+                ExpressionAttributeValues={':matched': cur_matches},
+            )
+    except Exception as e:
+        raise Exception(e)
 
-def perform_random_loop(members, rounds, round_num):
+def perform_random_loop(df, number4groups):
     # the loop that attempts to do the matching
     out = 0 # variable to determine when we've succeeded
-    # clear any attempts to match that failed
-    curRound = rounds[0]
-    for member in members:
-      member_group_num = member["round"][round_num]["group"]
-      if member_group_num != -1:
-        curRound["groups"][member_group_num] = []
-        member_group_num= -1
-    logger.info(f"members: {members}")
+    # clear any attemps to match that failed
+    df['current_match'] = [ [] for _ in range(len(df)) ]
+    df['current_group'] = -1
     # create a random column 
-    # df.loc[:, 'randint'] = np.random.choice(np.arange(0, len(df)), size=len(df), replace=False)
-
+    df.loc[:, 'randint'] = np.random.choice(np.arange(0, len(df)), size=len(df), replace=False)
     groupnum = 1 # a counter for the group number
-    return 1
+    # iterate through, starting with the most number of possible matches 
+
+    for i, (index, row) in enumerate(df.sort_values(['size_prev_match', 'num_possible_matches', 'randint']).iterrows()):
+        # select possible matches for person1
+        if i == 0:
+            p1_possible = df.loc[index, 'possible_matches']
+        elif i > 0 :
+            if len(remaining) == 0:
+                out = 1
+                return out
+            elif index not in remaining.index.tolist(): 
+                continue
+            else:
+                p1_possible = np.intersect1d(remaining.loc[index, 'possible_matches'], \
+                                             remaining.index.tolist())
+        if len(p1_possible) <= 1:
+            return out
+        # pick a random person2
+        p2 = df.loc[p1_possible].sample(1)
+        p2_possible = p2['possible_matches'].tolist()
+        # take person1 possible matches and remove person2 and all of person2's not possible matches
+        p1p2_possible_step1 = np.array(p1_possible)[~np.isin(p1_possible, p2.index.tolist())] # remove p2
+        p1p2_possible = p1p2_possible_step1[np.isin(p1p2_possible_step1, p2_possible)]
+
+        if len(p1p2_possible) == 0:
+            return out
+        # pick a random person3
+        p3 = df.loc[p1p2_possible].sample(1)
+        p3_possible = p3['possible_matches'].tolist()
+
+        if i < number4groups:
+            # take person3 out oc p1p2_possible
+            p1p2p3_possible_step1 = np.array(p1p2_possible)[~np.isin(p1p2_possible, p3.index.tolist())] 
+            # keep only person3's possible matches 
+            p1p2p3_possible = p1p2p3_possible_step1[np.isin(p1p2p3_possible_step1, p3_possible)]
+            
+            if len(p1p2p3_possible) == 0:
+                return out
+                break
+            # pick a random person4
+            p4 = df.loc[p1p2p3_possible].sample(1)
+
+            # write the current match for all *4* group members
+            df.loc[index, 'current_match'].extend([index, p2.index[0], p3.index[0], p4.index[0]])
+            df.loc[p2.index[0], 'current_match'].extend([p2.index[0], index, p3.index[0], p4.index[0]])
+            df.loc[p3.index[0], 'current_match'].extend([p3.index[0], index, p2.index[0], p4.index[0]])
+            df.loc[p4.index[0], 'current_match'].extend([p4.index[0], index, p2.index[0], p3.index[0]])
+            
+            df.loc[index, 'current_group'] = groupnum
+            df.loc[p2.index[0], 'current_group'] = groupnum
+            df.loc[p3.index[0], 'current_group'] = groupnum
+            df.loc[p4.index[0], 'current_group'] = groupnum
+            
+        else:
+            # write the current match for all *3* group members
+            df.loc[index, 'current_match'].extend([index, p2.index[0], p3.index[0]])
+            df.loc[p2.index[0], 'current_match'].extend([p2.index[0], index, p3.index[0]])
+            df.loc[p3.index[0], 'current_match'].extend([p3.index[0], index, p2.index[0]])
+            
+            df.loc[index, 'current_group'] = groupnum
+            df.loc[p2.index[0], 'current_group'] = groupnum
+            df.loc[p3.index[0], 'current_group'] = groupnum
+        # create a new version of the overall df with the matches rows removed
+        if i == 0:
+            if i < number4groups:
+                remaining = df.loc[df.index.difference((index, p2.index[0], p3.index[0], p4.index[0]))]
+            else:
+                remaining = df.loc[df.index.difference((index, p2.index[0], p3.index[0]))]
+        if i > 0:
+            if i < number4groups:
+                remaining = remaining.loc[remaining.index.difference((index, p2.index[0], \
+                                                                      p3.index[0], p4.index[0]))]
+            else:
+                remaining = remaining.loc[remaining.index.difference((index, p2.index[0], p3.index[0]))]
+
+        if i == len(df) - 1:
+            out = 1
+            return out
+
+        groupnum+=1
+
 
 def get_size_prev_match(member, lastRound, lastKey):
     if member["round"].get(str(lastKey-1)):
@@ -148,8 +241,6 @@ def get_size_prev_match(member, lastRound, lastKey):
         if group_num != -1:
             return len(lastRound["groups"][str(group_num)])
     return 0
-
-
 
 def get_round_numb(round):
     return int(round.get("round_number"))
