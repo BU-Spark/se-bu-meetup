@@ -33,6 +33,32 @@ def write_to_member(next):
             ExpressionAttributeValues={':val': round}
         )
     
+def update_prior_matches(key):
+    optedMembers = memberTable.scan(
+        FilterExpression='round.#key.#opted = :optedIn',
+        ExpressionAttributeNames={'#key': key, "#opted": "opted_in"},
+        ExpressionAttributeValues={':optedIn': True},
+    )
+    memberItems = optedMembers["Items"]
+    table = roundsTable.get_item(
+        Key={'round_number': key},
+    )
+    tableGroups = table["Item"]["groups"]
+    for member in memberItems:
+        lastGroupNum = member['round'][key]['group']
+        if lastGroupNum != -1:
+            lastGroup = list(tableGroups[str(lastGroupNum)])
+            lastGroup.remove(member['id'])
+            member['prior_matches'].extend(lastGroup)
+            prior_matches = list(set(member['prior_matches']))
+            memberTable.update_item(
+                Key={'id': member['id']},
+                UpdateExpression='SET prior_matches = :mtch',
+                ExpressionAttributeValues={':mtch': prior_matches},
+                ConditionExpression='attribute_exists(id)'
+            )
+
+
 
 def lambda_handler(event, context):
     # 1. get next round number
@@ -51,6 +77,11 @@ def lambda_handler(event, context):
     print(next)
 
     try:
+
+        # before we create a new round, we want to move all the current_match to prior_matches, if next > 1 then we know there is a previous round which might have matches
+        if (lastKey + 1 > 1):
+            update_prior_matches(str(lastKey))
+
         # 2.  add a empty object in table rounds
         write_to_rounds(next)
         # 3. read all member and add round
@@ -66,7 +97,7 @@ def lambda_handler(event, context):
                 "message": f" wrong on server: {Exception}"
             })
         })
-        
+
         
     # invoke notify lambda
     # response = client.invoke(
