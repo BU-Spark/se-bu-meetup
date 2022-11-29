@@ -9,7 +9,7 @@
         body {
             position: relative;
         }
-        button {
+        .long-button {
             width: 200px;
         }
         .cover {
@@ -47,12 +47,18 @@
         crossorigin="anonymous"></script>
     <script src="https://cdn.bootcss.com/vue/2.5.17/vue.js"></script>
     <div id="main-app" class="container-sm" style="margin-top: 60px">
+        <div id="liveAlertPlaceholder" v-if="isMsg">
+            <div class="alert alert-dismissible" v-bind:class="msgType" role="alert">
+                <div>{{ msgContent }}</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" @click="onMsgClose"></button>
+            </div>
+        </div>
         <div>
             Current Round: {{ round }} Matched: {{ status }}
         </div>
         <div class="d-flex flex-column">
-            <button @click="onNewRoundClick" class="btn btn-primary mt-2">New Round</button>
-            <button @click="onMatchClick" class="btn btn-primary mt-2 mb-2">Match Round</button>
+            <button @click="onNewRoundClick" class="btn btn-primary mt-2 long-button">New Round</button>
+            <button @click="onMatchClick" class="btn btn-primary mt-2 mb-2 long-button">Match Round</button>
         </div>
         <div class="alert alert-secondary">
             <div>Tips:</div>
@@ -69,7 +75,7 @@
                 <div class="modal-content">
                     <input v-model="username" class="form-control mb-2" type="text" name="username" placeholder="username">
                     <input v-model="password" class="form-control" type="text" name="password" placeholder="password">
-                    <button @click="onLoginClick" class="btn btn-primary mt-2 mb-2">Login</button>
+                    <button @click="onLoginClick" class="btn btn-primary mt-2 mb-2 long-button">Login</button>
                 </div>
             </div>
         </div>
@@ -98,6 +104,9 @@
                 error: "",
                 username: "",
                 password: "",
+                isMsg: false,
+                msgContent: "",
+                msgType: "",
             },
             async mounted() {
                 function getData() {
@@ -143,6 +152,14 @@
                 this.isLoading = false;
             },
             methods: {
+                showMsg(content, type) {
+                    this.msgContent = content;
+                    this.msgType = type === "success" ? 'alert-success' : 'alert-danger';
+                    this.isMsg = true;
+                },
+                onMsgClose() {
+                    this.isMsg = false;
+                },
                 onLoginClick() {
                     this.isLoading = true;
                     $.ajax({
@@ -160,6 +177,7 @@
                         },
                         error: (XMLHttpRequest, textStatus, errorThrown) => {
                             console.log(`POST /login: ${XMLHttpRequest.status} error`);
+                            this.showMsg(`POST /login: ${XMLHttpRequest.status}`, "danger");
                             this.username = "";
                             this.password = "";
                             this.isLoading = false;
@@ -180,10 +198,11 @@
                             this.status = data.status;
                             this.isLogined = true;
                             this.isLoading = false;
-                            alert('new round success!', 'success');
+                            this.showMsg("Successfully new a Round!", "success");
                         },
                         error: (XMLHttpRequest, textStatus, errorThrown) => {
                             console.log(`POST /new-round: ${XMLHttpRequest.status}`);
+                            this.showMsg(`POST /new-round: ${XMLHttpRequest.status}`, "danger");
                             if (XMLHttpRequest.status == 403) {
                                 this.isLogined = false; 
                             } else {
@@ -206,9 +225,11 @@
                             this.status = data.status;
                             this.isLogined = true;
                             this.isLoading = false;
+                            this.showMsg("Successfully match a Round!", "success");
                         },
                         error: (XMLHttpRequest, textStatus, errorThrown) => {
                             console.log(`POST /match: ${XMLHttpRequest.status}`);
+                            this.showMsg(`POST /match: ${XMLHttpRequest.status}`, "danger");
                             if (XMLHttpRequest.status == 403) {
                                 this.isLogined = false; 
                             } else {
