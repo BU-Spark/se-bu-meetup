@@ -82,6 +82,23 @@ def lambda_handler(event, context):
         df1.set_index('id', inplace=True)
 
         createMatch(df1, number4groups, membersTable, roundsTable, str(lastKey))
+        clientLambda = boto3.client('lambda')
+        # invoke notify lambda
+        response = clientLambda.invoke(
+            FunctionName='arn:aws:lambda:us-east-1:947610578306:function:member-lambda-dev-sendEmail',
+            InvocationType='RequestResponse',
+            LogType='Tail',
+        )
+        
+        print('notify status: ' + str(response['StatusCode']))
+        if (response['StatusCode'] != 200):
+            return {
+                "statusCode": 500, 
+                "body": json.dumps({
+                    "statusCode": 500,
+                    "message": f" notify fail: {Exception}"
+                })
+            } 
 
         response = {
             "statusCode": 200,
@@ -125,6 +142,7 @@ def createMatch(df, number4groups, membersTable, roundsTable, lastKey):
         df.reset_index(inplace=True)
         members = df.to_dict(orient='records')
         for member in members:
+            # update table
             user_id = member['id']
             cur_group = member['current_group'] 
             cur_matches = member['current_match']
