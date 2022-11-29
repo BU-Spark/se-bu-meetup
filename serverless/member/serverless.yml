@@ -1,0 +1,47 @@
+service: member-lambda
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  apiGateway:
+    restApiId:
+      "Fn::ImportValue": MemberGateWay-restApiId
+    restApiRootResourceId:
+      "Fn::ImportValue": MemberGateway-rootResourceId
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: "*"
+
+functions:
+  register:
+    handler: register.main
+    events:
+      - http:
+          path: register
+          method: post
+  optin:
+    handler: optin.main
+    events:
+      - http:
+          path: optin
+          method: post
+  sendEmail:
+    handler: sendEmail.main
+    events:
+      - http:
+          path: email
+          method: post
+    environment: ${file(env.json)}
+
+plugins:
+  - serverless-python-requirements

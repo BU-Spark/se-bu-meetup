@@ -1,0 +1,34 @@
+service: dynamo-table
+
+provider:
+  name: aws
+  region: us-east-1
+
+resources:
+  Resources:
+    memberTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Member
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    roundsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Rounds
+        AttributeDefinitions:
+          - AttributeName: round_number
+            AttributeType: S
+        KeySchema:
+          - AttributeName: round_number
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
