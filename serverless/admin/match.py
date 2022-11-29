@@ -150,8 +150,6 @@ def createMatch(df, number4groups, membersTable, roundsTable, lastKey):
             if counter >= 1000:
                 raise Exception("match failed, not possible")
        
-        pd.options.display.max_columns = None
-        pd.options.display.max_rows = None
         df.reset_index(inplace=True)
         members = df.to_dict(orient='records')
         for member in members:
