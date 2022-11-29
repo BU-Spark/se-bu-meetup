@@ -22,6 +22,9 @@ def lambda_handler(event, context):
         roundsItems.sort(key=get_round_numb, reverse=True)
         lastKey = roundsItems[0]["round_number"]
 
+        if len(roundsItems[0]["groups"]) > 0:
+            raise Exception("Already matched.")
+
         # scan is expensive, but right now we don't have an index for querying (this needs to be changed in future)
         optedMembers = membersTable.scan(
             FilterExpression='round.#key.#opted = :optedIn',
