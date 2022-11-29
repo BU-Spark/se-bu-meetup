@@ -1,7 +1,6 @@
 import json
 import time
 import hashlib
-md5 = hashlib.md5()
 
 def process_body(body):
     print(body)
@@ -16,9 +15,11 @@ def lambda_handler(event, context):
     if process_body(body):
         print("PASSED AUTH")
         # set cookie
-        str="bumeetup,bumeetupadminpassword"
-        md5.update(str)
-        cookie=md5.hexdigest()
+        key = "bumeetup,bumeetupadminpassword"
+        encoded = key.encode(encoding='UTF-8', errors='strict')
+        md5 = hashlib.md5()
+        md5.update(encoded)
+        cookie = md5.hexdigest()
         response = {
             "isBase64Encoded": False,
             "statusCode": 200,

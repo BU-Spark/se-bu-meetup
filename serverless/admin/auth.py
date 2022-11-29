@@ -2,7 +2,7 @@ import json
 import base64
 import time
 import hashlib
-md5 = hashlib.md5()
+
 
 def process_cookie(cookie):
     try:
@@ -11,13 +11,17 @@ def process_cookie(cookie):
         list = cookie.split(",")
         hashed = list[0]
         timestamp = list[1]
+        print("hashed: " + hashed)
         print("timestamp: " + timestamp)
         if (isExpire(timestamp)):
             return False
         # not expire
-        str = "bumeetup,bumeetupadminpassword"
-        md5.update(str)
+        key = "bumeetup,bumeetupadminpassword"
+        encoded = key.encode(encoding='UTF-8', errors='strict')
+        md5 = hashlib.md5()
+        md5.update(encoded)
         standard = md5.hexdigest()
+        print("standard: " + standard) 
         if (standard == hashed):
             return True
         return False
@@ -48,19 +52,6 @@ def lambda_handler(event, context):
         return authResponse
     else:
         print("FAILED AUTH")
-        # clear cookie
-        # response = {
-        #     "isBase64Encoded": False,
-        #     "statusCode": 401,
-        #     "headers": {
-        #         "Content-Type": "application/json",
-        #         'Set-Cookie': ""
-        #     },
-        #     "body": json.dumps({
-        #         "statusCode": 401,
-        #         "message": "auth fail",
-        #     })
-        # }
         resp = { 
             "policyDocument": { 
                 "Version": "2012-10-17", 
