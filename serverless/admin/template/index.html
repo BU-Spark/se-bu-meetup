@@ -24,6 +24,15 @@
             justify-content: center;
         }
         .top {
+            z-index: 10;
+        }
+        .livealert {
+            position: fixed;
+            top: 0; 
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
             z-index: 999;
         }
     </style>
@@ -64,8 +73,21 @@
                 </div>
             </div>
         </div>
+        <div id="liveAlertPlaceholder" class="livealert"></div>
     </div>
     <script>
+        const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
+        const alert = (message, type) => {
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = [
+                `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+                `   <div>${message}</div>`,
+                '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+                '</div>'
+            ].join('');
+            alertPlaceholder.append(wrapper);
+        };
+
         const main = new Vue({
             el: '#main-app',
             data: {
@@ -158,6 +180,7 @@
                             this.status = data.status;
                             this.isLogined = true;
                             this.isLoading = false;
+                            alert('new round success!', 'success');
                         },
                         error: (XMLHttpRequest, textStatus, errorThrown) => {
                             console.log(`POST /new-round: ${XMLHttpRequest.status}`);
