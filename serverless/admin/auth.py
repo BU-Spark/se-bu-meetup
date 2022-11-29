@@ -1,22 +1,24 @@
 import json
 import base64
 import time
+import hashlib
+md5 = hashlib.md5()
 
 def process_cookie(cookie):
     try:
         if cookie.startswith("Session="):
             cookie = cookie[8:]
         list = cookie.split(",")
-        username = list[0]
-        password = list[1]
-        timestamp = list[2]
-        print("username: " + username)
-        print("password: " + password)
+        hashed = list[0]
+        timestamp = list[1]
         print("timestamp: " + timestamp)
         if (isExpire(timestamp)):
             return False
         # not expire
-        if (username == "bumeetup" and password == "bumeetupadminpassword"):
+        str = "bumeetup,bumeetupadminpassword"
+        md5.update(str)
+        standard = md5.hexdigest()
+        if (standard == hashed):
             return True
         return False
     except:
