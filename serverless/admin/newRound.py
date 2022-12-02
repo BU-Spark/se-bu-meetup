@@ -99,22 +99,21 @@ def lambda_handler(event, context):
         })
 
         
-    # invoke notify lambda
-    # response = client.invoke(
-    #     FunctionName='arn:aws:lambda:us-east-1:947610578306:function:member-lambda-dev-sendEmail',
-    #     InvocationType='RequestResponse',
-    #     LogType='Tail',
-    # )
+    response = clientLambda.invoke(
+        FunctionName='arn:aws:lambda:us-east-1:947610578306:function:member-lambda-dev-sendOptIn',
+        InvocationType='RequestResponse',
+        LogType='Tail',
+    )
     
-    # print('notify status: ' + str(response['StatusCode']))
-    # if (response['StatusCode'] != 200):
-    #     return {
-    #         "statusCode": 500, 
-    #         "body": json.dumps({
-    #             "statusCode": 500,
-    #             "message": f" notify fail: {Exception}"
-    #         })
-    #     } 
+    print('notify status: ' + str(response['StatusCode']))
+    if (response['StatusCode'] != 200):
+        return {
+            "statusCode": 500, 
+            "body": json.dumps({
+                "statusCode": 500,
+                "message": f" notify fail: {Exception}"
+            })
+        } 
     
     # succeed return 
     response = {

@@ -42,6 +42,7 @@ functions:
             type: request
   newRound:
     handler: newRound.lambda_handler
+    timeout: 30
     events:
       - http:
           path: new-round
