@@ -1,5 +1,8 @@
 service: member-lambda
 
+package:
+  include: template/**
+
 provider:
   name: aws
   runtime: python3.9
@@ -29,6 +32,12 @@ functions:
       - http:
           path: register
           method: post
+  submit:
+    handler: submit.main 
+    events:
+      - http:
+          path: submit
+          method: get
   optin:
     handler: optin.main
     events:
