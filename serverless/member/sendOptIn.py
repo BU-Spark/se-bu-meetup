@@ -65,6 +65,7 @@ def send_emails(members, round_num):
 
     email_sender = os.environ["EMAIL_SENDER"]
     email_password = os.environ["EMAIL_PASSWORD"]
+    api_endpoint = os.environ["API_ENDPOINT"]
 
     subject = "BU Meetup Round %s Opt-in" % round_num
     context = ssl.create_default_context()
@@ -75,22 +76,28 @@ def send_emails(members, round_num):
         member_name = member['first_name']
         member_email = member['email']
 
+
+
+        link = api_endpoint + "dev/submit?id=" + member_id
+
         body = """Hello %s,
-
-    Do you want to opt-in for round %s of BU Meetup? 
-
+        <br>
+    Please update your opt-in preference for round %s using this link: <a href="%s">%s</a>
+  <br>
     Feel free to reach out with any questions and we’ll do our best to answer them for you.
-
+<br>
     ~BU Meetup (Eric Wellers & Will Saunders)""" % (
             member_name,
             round_num,
+            link,
+            link
         )
 
         em = EmailMessage()
         em["From"] = email_sender
         em["To"] = member_email
         em["Subject"] = subject
-        em.set_content(body)
+        em.set_content(body, subtype="html")
 
         logger.info(f"email recipient: {member_email}")
         smtp.sendmail(email_sender, member_email, em.as_string())

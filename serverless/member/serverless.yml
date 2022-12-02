@@ -33,7 +33,7 @@ functions:
           path: register
           method: post
   submit:
-    handler: submit.main 
+    handler: submit.main
     events:
       - http:
           path: submit
@@ -53,7 +53,7 @@ functions:
     environment: ${file(env.json)}
   sendOptIn:
     handler: sendOptIn.main
-    timeout: 600
+    timeout: 30
     events:
       - http:
           path: email-optin

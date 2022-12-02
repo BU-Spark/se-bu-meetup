@@ -29,7 +29,7 @@
     <script>
         // 1. fetch userinfo from url
         const queryString = window.location.search;
-        console.log(queryString);
+
         const urlParams = new URLSearchParams(queryString);
         const userid = urlParams.get('id');
 
@@ -39,10 +39,10 @@
             event.preventDefault();
             $.ajax({
                 method: "POST",
-                url: "/dev/submit",
+                url: "/dev/optin",
                 data: {
                     id: userid,
-                    optin: true
+                    opted_in: true
                 },
                 success: (resp) => {
                     console.log(resp);
@@ -62,10 +62,10 @@
             event.preventDefault();
             $.ajax({
                 method: "POST",
-                url: "/dev/submit",
+                url: "/dev/optin",
                 data: {
                     id: userid,
-                    optin: false 
+                    opted_in: false 
                 },
                 success: (resp) => {
                     console.log(resp);
