@@ -13,54 +13,64 @@ def process_cookie(cookie):
         timestamp = list[1]
         print("hashed: " + hashed)
         print("timestamp: " + timestamp)
-        if (isExpire(timestamp)):
+        if isExpire(timestamp):
             return False
         # not expire
         key = "bumeetup,bumeetupadminpassword"
-        encoded = key.encode(encoding='UTF-8', errors='strict')
+        encoded = key.encode(encoding="UTF-8", errors="strict")
         md5 = hashlib.md5()
         md5.update(encoded)
         standard = md5.hexdigest()
-        print("standard: " + standard) 
-        if (standard == hashed):
+        print("standard: " + standard)
+        if standard == hashed:
             return True
         return False
     except:
         return False
+
 
 def isExpire(start):
     end = time.time()
     duration = end - float(start)
     return duration > 86400
 
+
 def lambda_handler(event, context):
     print(event)
-    headers = event['headers']
-    if ('Cookie' in headers.keys()) and process_cookie(headers['Cookie']):
+    headers = event["headers"]
+    if ("Cookie" in headers.keys()) and process_cookie(headers["Cookie"]):
         print("PASSED AUTH")
-        authResponse = { 
+        authResponse = {
             "principalId": "admin",
-            "policyDocument": { 
-                "Version": "2012-10-17", 
-                "Statement": [{
-                    "Action": "execute-api:Invoke", 
-                    "Resource": ["arn:aws:execute-api:us-east-1:947610578306:cmhnb3jd1m/*/*"], 
-                    "Effect": "Allow"
-                }]
-            }
+            "policyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Action": "execute-api:Invoke",
+                        "Resource": [
+                            "arn:aws:execute-api:us-east-1:947610578306:cmhnb3jd1m/*/*"
+                        ],
+                        "Effect": "Allow",
+                    }
+                ],
+            },
         }
         return authResponse
     else:
         print("FAILED AUTH")
-        resp = { 
-            "policyDocument": { 
-                "Version": "2012-10-17", 
-                "Statement": [{
-                    "Action": "execute-api:Invoke", 
-                    "Resource": ["arn:aws:execute-api:us-east-1:947610578306:cmhnb3jd1m/*/*"], 
-                    "Effect": "Deny"
-                }]
+        resp = {
+            "policyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Action": "execute-api:Invoke",
+                        "Resource": [
+                            "arn:aws:execute-api:us-east-1:947610578306:cmhnb3jd1m/*/*"
+                        ],
+                        "Effect": "Deny",
+                    }
+                ],
             }
         }
-        # return response 
+        # return response
         return resp
