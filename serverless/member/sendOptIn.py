@@ -33,8 +33,8 @@ def main(event, context):
         users = []
 
         for member in membersItems:
-          if member['round'].get(lastKey):
-            users.append(member)
+            if member["round"].get(lastKey):
+                users.append(member)
 
         send_emails(users, lastKey)
 
@@ -70,17 +70,15 @@ def send_emails(members, round_num):
     subject = "BU Meetup Round %s Opt-in" % round_num
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as smtp:
-      smtp.login(email_sender, email_password)
-      for member in members:
-        member_id = member['id']
-        member_name = member['first_name']
-        member_email = member['email']
+        smtp.login(email_sender, email_password)
+        for member in members:
+            member_id = member["id"]
+            member_name = member["first_name"]
+            member_email = member["email"]
 
+            link = api_endpoint + "dev/submit?id=" + member_id
 
-
-        link = api_endpoint + "dev/submit?id=" + member_id
-
-        body = """Hello %s,
+            body = """Hello %s,
         <br>
         <br>
     Please update your opt-in preference for round %s using this link: <a href="%s">%s</a>
@@ -90,19 +88,19 @@ def send_emails(members, round_num):
 <br>
 <br>
     ~BU Meetup (Eric Wellers & Will Saunders)""" % (
-            member_name,
-            round_num,
-            link,
-            link
-        )
+                member_name,
+                round_num,
+                link,
+                link,
+            )
 
-        em = EmailMessage()
-        em["From"] = email_sender
-        em["To"] = member_email
-        em["Subject"] = subject
-        em.set_content(body, subtype="html")
+            em = EmailMessage()
+            em["From"] = email_sender
+            em["To"] = member_email
+            em["Subject"] = subject
+            em.set_content(body, subtype="html")
 
-        logger.info(f"email recipient: {member_email}")
-        smtp.sendmail(email_sender, member_email, em.as_string())
+            logger.info(f"email recipient: {member_email}")
+            smtp.sendmail(email_sender, member_email, em.as_string())
 
     logger.info("Emails sent...")

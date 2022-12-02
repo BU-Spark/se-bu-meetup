@@ -5,6 +5,7 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+
 def main(event, context):
     try:
         logger.info(f"Triggered event: {event}")
@@ -16,24 +17,24 @@ def main(event, context):
         rounds = roundsTable.scan()
         items = rounds["Items"]
         if not items:
-          raise Exception("There are no rounds.")
+            raise Exception("There are no rounds.")
         items.sort(key=get_round_numb, reverse=True)
-        lastKey = items[0]['round_number']
+        lastKey = items[0]["round_number"]
 
         body = json.loads(event["body"])
         user_id = body["id"]
         optedIn = body["opted_in"]
 
         if type(optedIn) != bool:
-          raise Exception("opted_in must be a boolean")
+            raise Exception("opted_in must be a boolean")
 
         # find member with the id and then update their opted_in status
         membersTable.update_item(
-            Key={'id': user_id},
-            UpdateExpression='SET round.#key.#opted = :optedIn',
-            ExpressionAttributeNames={'#key': lastKey, "#opted": "opted_in"},
-            ExpressionAttributeValues={':optedIn': optedIn},
-            ConditionExpression='attribute_exists(id)'
+            Key={"id": user_id},
+            UpdateExpression="SET round.#key.#opted = :optedIn",
+            ExpressionAttributeNames={"#key": lastKey, "#opted": "opted_in"},
+            ExpressionAttributeValues={":optedIn": optedIn},
+            ConditionExpression="attribute_exists(id)",
         )
 
         response = {
@@ -53,5 +54,6 @@ def main(event, context):
         }
     return response
 
+
 def get_round_numb(round):
-    return int(round.get('round_number'))
+    return int(round.get("round_number"))
