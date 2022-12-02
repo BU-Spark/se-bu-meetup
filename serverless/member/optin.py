@@ -1,6 +1,7 @@
 import boto3
 import json
 import logging
+import base64
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -22,7 +23,7 @@ def main(event, context):
         lastKey = items[0]["round_number"]
 
         body = json.loads(event["body"])
-        user_id = body["id"]
+        user_id = base64.b64decode(body["id"]).decode()
         optedIn = body["opted_in"]
 
         if type(optedIn) != bool:

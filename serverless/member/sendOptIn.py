@@ -5,6 +5,7 @@ import os
 from email.message import EmailMessage
 import ssl
 import smtplib
+import base64
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -76,7 +77,7 @@ def send_emails(members, round_num):
             member_name = member["first_name"]
             member_email = member["email"]
 
-            link = api_endpoint + "dev/submit?id=" + member_id
+            link = api_endpoint + "dev/submit?id=" + base64.b64encode(member_id.encode()).decode()
 
             body = """Hello %s,
         <br>
