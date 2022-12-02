@@ -27,15 +27,19 @@
         </div>
     </div>
     <script>
-        // 1. fetch userinfo from url
-        const queryString = window.location.search;
+        /* 1. fetch userinfo from url */
+        const getId = () => {
+            const queryString = window.location.search;
+            console.log(queryString);
+            const urlParams = new URLSearchParams(queryString);
+            const userid = urlParams.get('id');
+            return userid;
+        };
 
-        const urlParams = new URLSearchParams(queryString);
-        const userid = urlParams.get('id');
-
-        // 2. ajax to POST /optin with id: hash(user info) + optin: user choice
+        /* 2. ajax to POST /optin with id: hash(user info) + optin: user choice */
         $("#join").click((event) => {
-            if (!urlParams.has('id')) return;
+            const userid = getId();
+            if (userid.length <= 0) return;
             event.preventDefault();
             $.ajax({
                 method: "POST",
@@ -48,17 +52,18 @@
                     console.log(resp);
                     const data = resp.data;
                     console.log(`GET /status: code: ${resp.statusCode} msg: ${resp.message}`);
-                    alert("Success! We will email you when you are matched!")
+                    alert("Success! We will email you when you are matched!");
                 },
                 error: (XMLHttpRequest, textStatus, errorThrown) => {
                     console.log(XMLHttpRequest.status);
-                    alert("Fail! Please try again!")
+                    alert("Fail! Please try again!");
                 }
             })
         });
         
         $("#reject").click((event) => {
-            if (!urlParams.has('id')) return;
+            const userid = getId();
+            if (userid.length <= 0) return;
             event.preventDefault();
             $.ajax({
                 method: "POST",
@@ -71,11 +76,11 @@
                     console.log(resp);
                     const data = resp.data;
                     console.log(`GET /status: code: ${resp.statusCode} msg: ${resp.message}`);
-                    alert("Success! We will email you next round!")
+                    alert("Success! We will email you next round!");
                 },
                 error: (XMLHttpRequest, textStatus, errorThrown) => {
                     console.log(XMLHttpRequest.status);
-                    alert("Fail! Please try again!")
+                    alert("Fail! Please try again!");
                 }
             })
         });
