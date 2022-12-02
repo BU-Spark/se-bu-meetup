@@ -55,6 +55,7 @@ functions:
   match:
     handler: match.lambda_handler
     runtime: python3.8
+    timeout: 600
     events:
       - http:
           path: match

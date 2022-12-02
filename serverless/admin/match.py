@@ -22,6 +22,8 @@ def lambda_handler(event, context):
         roundsItems.sort(key=get_round_numb, reverse=True)
         lastKey = roundsItems[0]["round_number"]
 
+        logger.info(roundsItems[0])
+        logger.info(len(roundsItems[0]["groups"]))
         if len(roundsItems[0]["groups"]) > 0:
             raise Exception("Already matched.")
 
