@@ -40,10 +40,10 @@
             $.ajax({
                 method: "POST",
                 url: "/dev/submit",
-                data: JSON.stringify({
+                data: {
                     id: userid,
                     optin: true
-                }),
+                },
                 success: (resp) => {
                     console.log(resp);
                     const data = resp.data;
@@ -63,10 +63,10 @@
             $.ajax({
                 method: "POST",
                 url: "/dev/submit",
-                data: JSON.stringify({
+                data: {
                     id: userid,
                     optin: false 
-                }),
+                },
                 success: (resp) => {
                     console.log(resp);
                     const data = resp.data;
