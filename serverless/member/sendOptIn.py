@@ -82,9 +82,12 @@ def send_emails(members, round_num):
 
         body = """Hello %s,
         <br>
+        <br>
     Please update your opt-in preference for round %s using this link: <a href="%s">%s</a>
   <br>
+  <br>
     Feel free to reach out with any questions and we’ll do our best to answer them for you.
+<br>
 <br>
     ~BU Meetup (Eric Wellers & Will Saunders)""" % (
             member_name,

@@ -44,10 +44,10 @@
             $.ajax({
                 method: "POST",
                 url: "/dev/optin",
-                data: {
+                data: JSON.stringify({
                     id: userid,
                     opted_in: true
-                },
+                }),
                 success: (resp) => {
                     console.log(resp);
                     const data = resp.data;
@@ -68,10 +68,10 @@
             $.ajax({
                 method: "POST",
                 url: "/dev/optin",
-                data: {
+                data: JSON.stringify({
                     id: userid,
                     opted_in: false 
-                },
+                }),
                 success: (resp) => {
                     console.log(resp);
                     const data = resp.data;
