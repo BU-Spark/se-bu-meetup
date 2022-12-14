@@ -24,17 +24,23 @@ Each subfolder pertains to a different CloudFormation stack and resource.
 
 ## Descriptions
 
+There is a architecture graph in documents/ in the root directory which will be helpful for you to understand these Lambda functions.
+
+### dynamodb/
+
+Set up the Member and Rounds table. Must be deployed before the other lambda functions since they make calls to the database.
+
+- serverless.yml
+
 ### admin/
 
 All the files in this folder are for setting up all the lambda functions and connecting the lambda functions to the admin-gateway. So please make sure that the files in admin-gateway/ have been deployed before deploying the files in this folder.
-
-There is a architecture graph in documents/ in the root directory which will be helpful for you ti understand these Lambda functions.
 
 - auth.py: return auth policy.
 - index.py: return home page for administrator operations.
 - login.py: authenticate users and set Cookie.
 - match.py: maintain match/. Used to match students and notify everyone after matched. It will change data in databases.
-- newRound.py: maintain new-round/. Used to start a new round and notify everyone.  It will change data in databases.
+- newRound.py: maintain new-round/. Used to start a new round and notify everyone. It will change data in databases.
 - status.py: maintain status/. Used by index page to get current round and matched status.
 - serverless.yml
 
@@ -44,3 +50,14 @@ Apply for AWS Gateway resources for the admin part.
 
 - serverless.yml
 
+### member/
+
+All the files in this folder are for setting up all the lambda functions and connecting the lambda functions to the member-gateway. So please make sure that the files in member-gateway/ have been deployed before deploying the files in this folder.
+
+- optin.py: update member opted_in status.
+- register.py: inserts a new member into Member table.
+- sendEmail.py: notifies members about who're they matched with.
+- sendOptIn.py: send an email with a url brings user to a new web page that allows user to update their opted_in status.
+- submit.py: return web page for user to update their opted_in status.
+- env.json: stores environment variables to be used in the lambda functions.
+- serverless.yml
