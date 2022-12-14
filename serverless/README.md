@@ -28,7 +28,7 @@ There is a architecture graph in documents/ in the root directory which will be 
 
 ### dynamodb/
 
-Set up the Member and Rounds table. Must be deployed before the other lambda functions since they make calls to the database.
+Set up the Member and Rounds table. Must be deployed before the other lambda functions since they make changes to the database.
 
 - serverless.yml
 
@@ -60,4 +60,10 @@ All the files in this folder are for setting up all the lambda functions and con
 - sendOptIn.py: send an email with a url brings user to a new web page that allows user to update their opted_in status.
 - submit.py: return web page for user to update their opted_in status.
 - env.json: stores environment variables to be used in the lambda functions.
+- serverless.yml
+
+### admin-gateway/
+
+Apply for AWS Gateway resources for the member part.
+
 - serverless.yml
