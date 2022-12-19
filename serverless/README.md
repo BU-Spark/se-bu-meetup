@@ -67,3 +67,13 @@ All the files in this folder are for setting up all the lambda functions and con
 Apply for AWS Gateway resources for the member part.
 
 - serverless.yml
+
+## Known Issues
+
+The matching algorithm is migrated over from the clients code, so there is a known issue with the matching algorithm for small samples.
+
+- When there is a small number of people who opted in (~3 or less), the matching algorithm might fail.
+- When there is a small number of people who opted in (but some having the same departments/schools), the matching algorithm might fail.
+- When there is a small number of people who opted in and they were previously matched before, the matching algorithm might fail.
+
+The reason being that the matching algorithm tries to match in groups of 3/4, tries to match people of different majors, and tries to match people who have not been matched before.
