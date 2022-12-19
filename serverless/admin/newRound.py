@@ -20,9 +20,9 @@ def write_to_member(next):
     items = members["Items"]
     for m in items:
         round = m["round"]
-        # print(m)
+
         round[next] = {"opted_in": False, "group": -1}
-        # print(round)
+
         memberTable.update_item(
             Key={"id": m["id"]},
             UpdateExpression="SET round = :val",
