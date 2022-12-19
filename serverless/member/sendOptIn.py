@@ -6,6 +6,7 @@ from email.message import EmailMessage
 import ssl
 import smtplib
 import base64
+import requests
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -103,5 +104,11 @@ def send_emails(members, round_num):
 
             logger.info(f"email recipient: {member_email}")
             smtp.sendmail(email_sender, member_email, em.as_string())
+
+            # trigger twilio endpoint, pass in url and have it be displayed in the text message
+            r = requests.get('https://cs519azuremessager.azurewebsites.net/api/newRoundText', params = {"link": link, "round": round_num})
+            
+
+
 
     logger.info("Emails sent...")

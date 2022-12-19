@@ -5,6 +5,7 @@ import os
 from email.message import EmailMessage
 import ssl
 import smtplib
+import requests 
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -103,5 +104,10 @@ Feel free to reach out with any questions and we’ll do our best to answer them
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as smtp:
         smtp.login(email_sender, email_password)
         smtp.sendmail(email_sender, email_recipients, em.as_string())
+
+    for name in names:
+        # trigger twilio endpoint, pass in url and have it be displayed in the text message
+        r = requests.get('https://cs519azuremessager.azurewebsites.net/api/matchingNotification', params = {"match": body})
+
 
     logger.info("Emails sent...")

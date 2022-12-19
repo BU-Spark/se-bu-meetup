@@ -18,6 +18,15 @@ function onSubmit(event) {
       method: "post",
       payload: JSON.stringify(member),
     });
+
+    // call twilio endpoint to text user they signed up for BU MEET UP, right now only sends to the verified phone number listed on twilio console since it's a trial twilio account
+    // later on include phone number to text to in body
+    UrlFetchApp.fetch(
+      "https://cs519azuremessager.azurewebsites.net/api/signUpTrigger",
+      {
+        method: "post",
+      }
+    );
     console.log("Success");
   } catch (error) {
     console.log(error);
