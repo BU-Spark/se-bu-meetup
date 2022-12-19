@@ -77,7 +77,11 @@ def send_emails(members, round_num):
             member_name = member["first_name"]
             member_email = member["email"]
 
-            link = api_endpoint + "dev/submit?id=" + base64.b64encode(member_id.encode()).decode()
+            link = (
+                api_endpoint
+                + "dev/submit?id="
+                + base64.b64encode(member_id.encode()).decode()
+            )
 
             body = """Hello %s,
         <br>
