@@ -7,7 +7,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     match = req.params.get('match')
 
-    client = Client('AC7f96f8dbf944b2f115d5a6097050d878', '510bb3ee7c8c3efd9ec33da4acec0e56')
+    client = Client('ACCOUNT_SID', 'AUTH_TOKEN')
 
     message = client.messages.create(
         body=match,
