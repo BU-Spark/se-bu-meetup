@@ -14,5 +14,9 @@ Each subfolder pertains to a different Azure HTTP Trigger function.
 4. Verify your numbers on Twilio portal.
 4. Test using the specific HTTP Trigger endpoints.
 
+Demo Video:
+https://user-images.githubusercontent.com/74674789/208802942-1fed5a9b-bc32-41ae-bd15-f076c6d43174.mp4
 
+Azure Function App URL:
+https://cs519azuremessager.azurewebsites.net
 
