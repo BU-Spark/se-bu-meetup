@@ -1,0 +1,37 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "version" : "2022-12-02T04:19:44Z",
+    "title" : "meetup-member"
+  },
+  "host" : "1zrqp9tgzh.execute-api.us-east-1.amazonaws.com",
+  "basePath" : "/dev",
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/email" : {
+      "post" : {
+        "responses" : { }
+      }
+    },
+    "/email-optin" : {
+      "post" : {
+        "responses" : { }
+      }
+    },
+    "/optin" : {
+      "post" : {
+        "responses" : { }
+      }
+    },
+    "/register" : {
+      "post" : {
+        "responses" : { }
+      }
+    },
+    "/submit" : {
+      "get" : {
+        "responses" : { }
+      }
+    }
+  }
+}

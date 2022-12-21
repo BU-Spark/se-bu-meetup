@@ -1,43 +1,27 @@
-const api_url = "";
-
-// const SCHOOL_QUESTIONS = [
-//   'What is your name as it appears on your BU ID?',
-//   'What is your preferred first name?',
-//   'What is your BU ID?',
-//   'What are your pronouns?',
-//   'What is your BU email address?',
-//   "Can you attend meetups near BU's Charles River Campus?",
-//   'Are you in a Doctoral program (PhD, J.D. etc)',
-//   'Which of the following Schools are you enrolled in?',
-//   'Which Department or Program are you in?',
-//   'Which Department or Program are you enrolled in?',
-//   'Which Department or Program are you enrolled in?',
-//   'What Department or Program are you enrolled in?',
-//   'Which degree are you pursuing?',
-//   'Which Department or Program are you enrolled in?',
-//   'Which Department or Program are you enrolled in?',
-//   'What Department or Program are you enrolled in?',
-//   'What degree level are you currently pursuing at BU?',
-//   'What is the name of your degree program?',
-//   'Anything else you want to include?'
-// ]
+const api_url =
+  "https://1zrqp9tgzh.execute-api.us-east-1.amazonaws.com/dev/register";
 
 function onSubmit(event) {
-  const formResponse = event.response;
-  const itemResponses = formResponse.getItemResponses().map((itemResponse) => ({
-    question: itemResponse.getItem().getTitle(),
-    response: itemResponse.getResponse(),
-  }));
+  try {
+    const formResponse = event.response;
+    const itemResponses = formResponse
+      .getItemResponses()
+      .map((itemResponse) => ({
+        question: itemResponse.getItem().getTitle(),
+        response: itemResponse.getResponse(),
+      }));
 
-  const member = createMember(itemResponses);
+    const member = createMember(itemResponses);
+    member.timestamp = String(Date.now());
 
-  console.log(member);
-
-  // make api call to backend
-  // UrlFetchApp.fetch(api_url, {
-  //   method: "post",
-  //   payload: member
-  // })
+    UrlFetchApp.fetch(api_url, {
+      method: "post",
+      payload: JSON.stringify(member),
+    });
+    console.log("Success");
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 class Member {
@@ -49,6 +33,7 @@ class Member {
     this.school = "";
     this.department = "";
     this.phone_number = "";
+    this.timestamp = "";
   }
 }
 
@@ -89,7 +74,7 @@ function createMember(itemResponses) {
         if (response == "Faculty of Computing & Data Sciences") {
           member.department = "Faculty of Computing & Data Sciences";
         } else if (response == "School of Law") {
-          member.department = "School of Law";
+          member.department = "Law";
         } else if (response == "Questrom School of Business") {
           member.department = "Business";
         } else if (response == "School of Social Work") {

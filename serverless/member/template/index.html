@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="data:,">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BU meetup opt in</title>
+    <style>
+        .long-button {
+            width: 100px;
+        }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+        crossorigin="anonymous"></script>
+    <div class="container-sm" style="margin-top: 60px">
+        <p style="text-align: center;">Would you like to join this round ?</p>
+        <div class="d-flex flex-row justify-content-center">
+            <button id="join" class="btn btn-primary m-2 long-button">join</button>
+            <button id="reject" class="btn btn-primary m-2 long-button">reject</button>
+        </div>
+    </div>
+    <script>
+        /* 1. fetch userinfo from url */
+        const getId = () => {
+            const queryString = window.location.search;
+            console.log(queryString);
+            const urlParams = new URLSearchParams(queryString);
+            const userid = urlParams.get('id');
+            return userid;
+        };
+
+        /* 2. ajax to POST /optin with id: hash(user info) + optin: user choice */
+        $("#join").click((event) => {
+            const userid = getId();
+            if (userid.length <= 0) return;
+            event.preventDefault();
+            $.ajax({
+                method: "POST",
+                url: "/dev/optin",
+                data: JSON.stringify({
+                    id: userid,
+                    opted_in: true
+                }),
+                success: (resp) => {
+                    console.log(resp);
+                    const data = resp.data;
+                    console.log(`GET /status: code: ${resp.statusCode} msg: ${resp.message}`);
+                    alert("Success! We will email you when you are matched!");
+                },
+                error: (XMLHttpRequest, textStatus, errorThrown) => {
+                    console.log(XMLHttpRequest.status);
+                    alert("Fail! Please try again!");
+                }
+            })
+        });
+        
+        $("#reject").click((event) => {
+            const userid = getId();
+            if (userid.length <= 0) return;
+            event.preventDefault();
+            $.ajax({
+                method: "POST",
+                url: "/dev/optin",
+                data: JSON.stringify({
+                    id: userid,
+                    opted_in: false 
+                }),
+                success: (resp) => {
+                    console.log(resp);
+                    const data = resp.data;
+                    console.log(`GET /status: code: ${resp.statusCode} msg: ${resp.message}`);
+                    alert("Success! We will email you next round!");
+                },
+                error: (XMLHttpRequest, textStatus, errorThrown) => {
+                    console.log(XMLHttpRequest.status);
+                    alert("Fail! Please try again!");
+                }
+            })
+        });
+
+    </script>
+</body>
+</html>

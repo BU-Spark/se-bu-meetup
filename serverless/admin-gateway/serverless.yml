@@ -1,0 +1,25 @@
+service: admin-gateway
+
+provider:
+  name: aws
+  region: us-east-1
+
+resources:
+  Resources:
+    AdminGateWay:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        Name: meetup-admin
+  Outputs:
+    apiGatewayRestApiId:
+      Value:
+        Ref: AdminGateWay
+      Export:
+        Name: AdminGateWay-restApiId
+    apiGatewayRestApiRootResourceId:
+      Value:
+        Fn::GetAtt:
+          - AdminGateWay
+          - RootResourceId
+      Export:
+        Name: AdminGateway-rootResourceId

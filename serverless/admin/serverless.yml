@@ -1,0 +1,102 @@
+service: admin-lambda
+
+package:
+  include: template/**
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  apiGateway:
+    restApiId:
+      "Fn::ImportValue": AdminGateWay-restApiId
+    restApiRootResourceId:
+      "Fn::ImportValue": AdminGateway-rootResourceId
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - lambda:InvokeFunction
+            - lambda:InvokeAsync
+          Resource: "*"
+
+functions:
+  status:
+    handler: status.lambda_handler
+    events:
+      - http:
+          path: status
+          method: get
+          cors: true
+          authorizer:
+            name: authorizerFunc
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.cookie
+            type: request
+  newRound:
+    handler: newRound.lambda_handler
+    timeout: 30
+    events:
+      - http:
+          path: new-round
+          method: post
+          cors: true
+          authorizer:
+            name: authorizerFunc
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.cookie
+            type: request
+  match:
+    handler: match.lambda_handler
+    runtime: python3.8
+    timeout: 600
+    events:
+      - http:
+          path: match
+          method: post
+          cors: true
+          authorizer:
+            name: authorizerFunc
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.cookie
+            type: request
+  login:
+    handler: login.lambda_handler
+    events:
+      - http:
+          path: login
+          method: post
+          cors: true
+  homePage:
+    handler: index.lambda_handler
+    events:
+      - http:
+          path: home
+          method: get
+          cors: true
+  authorizerFunc:
+    handler: auth.lambda_handler
+
+custom:
+  pythonRequirements:
+    zip: true
+
+resources:
+  Resources:
+    GatewayResponse:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          "Fn::ImportValue": AdminGateWay-restApiId
+        StatusCode: "401"
+
+plugins:
+  - serverless-python-requirements
